@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Translator</title>
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #ffffff;
+    }
+    textarea, select, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+    textarea {
+      background-color: #f7f7f7;
+      color: #000;
+    }
+    select {
+      background-color: #ffffff;
+      color: #000;
+    }
+    button {
+      background-color: #00e6e6;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00cccc;
+    }
+    nav a {
+      margin-right: 10px;
+      color: #00e6e6;
+      text-decoration: none;
+    }
+    h1 {
+      text-align: center;
+      color: #00e6e6;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Multi-Language Translator</h1>
+  <textarea id="textToTranslate" rows="4" placeholder="Enter your text..."></textarea>
+  
+  <label>From:</label>
+  <select id="fromLang"></select>
+  <label>To:</label>
+  <select id="toLang"></select>
+  <button onclick="translateText()">Translate</button>
+  <div id="result"></div>
+
+  <script>
+    const langs = {
+      "af": "Afrikaans", "sq": "Albanian", "am": "Amharic", "ar": "Arabic", "hy": "Armenian",
+      "az": "Azerbaijani", "eu": "Basque", "be": "Belarusian", "bn": "Bengali", "bs": "Bosnian",
+      "bg": "Bulgarian", "ca": "Catalan", "ceb": "Cebuano", "zh": "Chinese", "hr": "Croatian",
+      "cs": "Czech", "da": "Danish", "nl": "Dutch", "en": "English", "eo": "Esperanto",
+      "et": "Estonian", "fi": "Finnish", "fr": "French", "de": "German", "el": "Greek",
+      "gu": "Gujarati", "ht": "Haitian Creole", "ha": "Hausa", "iw": "Hebrew", "hi": "Hindi",
+      "hu": "Hungarian", "is": "Icelandic", "id": "Indonesian", "ga": "Irish", "it": "Italian",
+      "ja": "Japanese", "jw": "Javanese", "kn": "Kannada", "kk": "Kazakh", "km": "Khmer",
+      "ko": "Korean", "ku": "Kurdish", "ky": "Kyrgyz", "lo": "Lao", "la": "Latin",
+      "lv": "Latvian", "lt": "Lithuanian", "mk": "Macedonian", "ms": "Malay", "ml": "Malayalam",
+      "mt": "Maltese", "mi": "Maori", "mr": "Marathi", "mn": "Mongolian", "my": "Burmese",
+      "ne": "Nepali", "no": "Norwegian", "fa": "Persian", "pl": "Polish", "pt": "Portuguese",
+      "pa": "Punjabi", "ro": "Romanian", "ru": "Russian", "sr": "Serbian", "sk": "Slovak",
+      "sl": "Slovenian", "so": "Somali", "es": "Spanish", "sw": "Swahili", "sv": "Swedish",
+      "tl": "Tagalog", "ta": "Tamil", "tt": "Tatar", "te": "Telugu", "th": "Thai",
+      "tr": "Turkish", "uk": "Ukrainian", "ur": "Urdu", "uz": "Uzbek", "vi": "Vietnamese",
+      "cy": "Welsh", "xh": "Xhosa", "yi": "Yiddish", "yo": "Yoruba", "zu": "Zulu"
+    };
+
+    for (let code in langs) {
+      const opt1 = new Option(langs[code], code);
+      const opt2 = new Option(langs[code], code);
+      document.getElementById("fromLang").appendChild(opt1);
+      document.getElementById("toLang").appendChild(opt2);
+    }
+
+    document.getElementById("fromLang").value = "en";
+    document.getElementById("toLang").value = "ur";
+
+    async function translateText() {
+      const text = document.getElementById("textToTranslate").value;
+      const sl = document.getElementById("fromLang").value;
+      const tl = document.getElementById("toLang").value;
+      const resDiv = document.getElementById("result");
+      resDiv.innerText = "Translating...";
+
+      try {
+        const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`);
+        const data = await res.json();
+        resDiv.innerText = data[0].map(t => t[0]).join(" ");
+      } catch {
+        resDiv.innerText = "Translation failed.";
+      }
+    }
+  </script>
+</body>
+</html>
